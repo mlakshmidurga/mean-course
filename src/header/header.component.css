@@ -1,0 +1,18 @@
+a{
+   color:white;
+    text-decoration: none;
+}
+
+ul{
+    list-style: none;
+    padding:15px;
+    margin:0px;
+   
+}
+ul{
+    display: flex;
+}
+
+.spacer{
+    flex:1 1 auto;
+}
