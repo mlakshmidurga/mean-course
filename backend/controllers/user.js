@@ -49,7 +49,7 @@ exports.userLogin = (req, res, next) => {
              });  
          }
          const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id},
-         "secret_key_should_be_no_longer",
+         "process.env.JWT_KEY",
          {expiresIn: '1hr'}
      );
      console.log(token);
