@@ -9,4 +9,9 @@ const userSchema = mongoose.Schema({
 });
 userSchema.plugin(uniqueValidator);
 
-module.exports = mongoose.model('User', userSchema);
+const User = module.exports = mongoose.model('User', userSchema);
+
+
+module.exports.getUserById = function(id,callback) {
+    User.findById(id, callback);
+}

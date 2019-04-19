@@ -1,5 +1,9 @@
+.header{
+    margin: auto;
+    width:80%;
+}
 a{
-   color:white;
+    color:#ffffff;
     text-decoration: none;
 }
 

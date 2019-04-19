@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import {AuthData} from './auth-data.model';
 import {environment} from '../../environments/environment';
-
+import { isNullOrUndefined } from 'util';
 
 const BACKEND_URL = environment.apiUrl + "/user/";
 
@@ -18,7 +18,8 @@ export class AuthService{
     private tokenTimer: any;
     private userId: string;
     private authStatusListener = new Subject();
-
+    user: AuthData;
+    currentUser: string;
     constructor(private http: HttpClient, private router: Router){}
 
     getToken(){
@@ -39,6 +40,7 @@ export class AuthService{
 
     createUser(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
+        
          this.http.post(BACKEND_URL + "/signup", authData).subscribe(() => {
              this.router.navigate(['/']);
          }, error => {
@@ -49,7 +51,8 @@ export class AuthService{
 
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
-        this.http.post<{token: string, expiresIn: number, userId: string}>(BACKEND_URL + "/login", authData)
+        console.log(authData);
+        this.http.post<{token: string, expiresIn: number, userId: string, currentUser: string}>(BACKEND_URL + "/login", authData)
         .subscribe(response => {
             const token = response.token;
             this.token = token;
@@ -58,15 +61,17 @@ export class AuthService{
                 this.setAuthTimer(expiresInDuration);
                 this.isAuthenticated = true;
                 this.userId = response.userId;
+                this.currentUser = response.currentUser;
                 this.authStatusListener.next(true);
                  const now = new Date();
                  const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
                  console.log(expirationDate);
-                 this.saveAuthData(token, expirationDate, this.userId);
+                 this.saveAuthData(token, expirationDate, this.userId, this.currentUser);
                 this.router.navigate(['/']);
             }
            
         }, error => {
+            console.log(error);
             this.authStatusListener.next(false);
         })
     }
@@ -83,6 +88,7 @@ export class AuthService{
             this.token = authInformation.token;
             this.isAuthenticated = true;
             this.userId = authInformation.userId;
+            
              this.setAuthTimer(expiresIn / 1000);
             this.authStatusListener.next(true);
         }
@@ -106,22 +112,25 @@ export class AuthService{
        }, duration * 1000);
     }
 
-    private saveAuthData(token: string, expirationDate: Date, userId:string) {
+    private saveAuthData(token: string, expirationDate: Date, userId:string, currentUser: string) {
         localStorage.setItem('token', token);
         localStorage.setItem('expiration', expirationDate.toISOString());
         localStorage.setItem('userId', userId);
+        localStorage.setItem('currentUser', JSON.stringify(userId));
     }
 
     private clearAuthData(){
         localStorage.removeItem('token');
         localStorage.removeItem('expirationDate');
         localStorage.removeItem('userId');
+        localStorage.removeItem('currentUser');
     }
 
     private getAuthData(){
         const token = localStorage.getItem('token');
         const expirationDate = localStorage.getItem('expiration');
         const userId = localStorage.getItem('userId');
+        const user = localStorage.getItem('currentUser');
         if(!token || !expirationDate){
             return;
         }
@@ -129,7 +138,20 @@ export class AuthService{
         return {
             token: token,
             expirationDate: new Date(expirationDate),
-            userId: userId
+            userId: userId,
+            currentUser: user
         }
     }
+
+    getCurrentUser(): AuthData{
+        let userString=localStorage.getItem('userId');
+        console.log(userString);
+        if(!isNullOrUndefined(userString)){
+            let user: AuthData;
+            return user;
+        }else{
+            return null;
+        }
+    
+        }
 }

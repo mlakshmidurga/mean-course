@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { AuthService } from "../auth.service";
 import { Subscription } from "rxjs";
+import { Router } from "@angular/router";
 
 
 @Component({
@@ -21,7 +22,7 @@ export class SignupComponent implements OnInit, OnDestroy{
         );
     }
    
- constructor(public authservice: AuthService){}
+ constructor(public authservice: AuthService, private router: Router){}
 
    
      onSignup(form: NgForm){
@@ -30,6 +31,7 @@ export class SignupComponent implements OnInit, OnDestroy{
         }
         this.isLoading = true;
         this.authservice.createUser(form.value.email, form.value.password);
+        console.log(form.value);
      }
 
      ngOnDestroy(){

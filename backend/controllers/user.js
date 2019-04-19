@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs');
-
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-
+// const config = require('../config/passport');
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
@@ -49,12 +51,12 @@ exports.userLogin = (req, res, next) => {
              });  
          }
          const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id},
-         "process.env.JWT_KEY",
+         "secret_this_should_be_longer",
          {expiresIn: '1hr'}
      );
      console.log(token);
          res.status(200).json({
-             token: token,
+             token: 'jwt ' + token,
              expiresIn: 3600,
              userId: fetchedUser._id
          });
@@ -65,4 +67,13 @@ exports.userLogin = (req, res, next) => {
              message: 'Invalid Authentication Credentials!'
          });
      });
+ }
+
+ require('../config/passport')(passport)
+ exports.userProfile =  passport.authenticate('jwt', {session: false}), (req, res ) => {
+    console.log(req.user);
+    
+    return res.json(
+         (req.user)
+     );
  }
