@@ -3,19 +3,20 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-// const config = require('../config/passport');
-exports.createUser = (req, res, next) => {
+const Admin = require('../models/admin');
+const config = require('../config/passport');
+exports.createAdmin = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
-        const user = new User({
+        const admin = new Admin({
             email: req.body.email,
-            password: hash
+            password: hash,
+            job_profile: req.body.job_profile
         });
-        user.save()
+        admin.save()
         .then(result => {
             res.status(200).json({
-            message:'user created!',
+            message:'admin created!',
             result: result
             });
         })
@@ -31,17 +32,17 @@ exports.createUser = (req, res, next) => {
 }
 
 
-exports.userLogin = (req, res, next) => {
+exports.adminLogin = (req, res, next) => {
     let fetchedUser;
-     User.findOne({ email: req.body.email }).then(user =>{
+     Admin.findOne({ email: req.body.email }).then(admin =>{
         //  console.log(user);
-         if(!user){
+         if(!admin){
              return res.status(401).json({
                  message: 'Auth Failed'
              });
          }
-        fetchedUser = user;
-         return bcrypt.compare(req.body.password, user.password)
+        fetchedAdmin = admin;
+         return bcrypt.compare(req.body.password, admin.password)
      })
      .then(result => {
          //console.log(result);
@@ -50,7 +51,7 @@ exports.userLogin = (req, res, next) => {
                  message: 'Auth Failed'
              });  
          }
-         const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id},
+         const token = jwt.sign({email: fetchedAdmin.email, adminId: fetchedAdmin._id, job_profile: fetchedAdmin.job_profile},
          "secret_this_should_be_longer",
          {expiresIn: '1hr'}
      );
@@ -58,8 +59,8 @@ exports.userLogin = (req, res, next) => {
          res.status(200).json({
              token: "JWT " + token,
              expiresIn: 3600,
-             userId: fetchedUser._id,
-             email: fetchedUser.email
+             adminId: fetchedAdmin._id,
+             email: fetchedAdmin.email
          });
      })
      .catch(err => {
@@ -70,7 +71,7 @@ exports.userLogin = (req, res, next) => {
      });
  }
 
-//  require('../config/passport')(passport)
+ require('../config/passport')(passport)
 //  exports.userProfile =  passport.authenticate('jwt', {session: false}), (req, res ) => {
 //     console.log(req.user);
     

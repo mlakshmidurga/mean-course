@@ -1,9 +1,9 @@
 const express = require('express');
 const  router = express.Router();
-const UserController = require('../controllers/user');
-router.post('/signup', UserController.createUser);
+const AdminController = require('../controllers/admin');
+router.post('/signup', AdminController.createAdmin);
 const passport = require('passport');
-router.post('/login',UserController.userLogin);
+router.post('/login',AdminController.adminLogin);
 router.get ('/profile', passport.authenticate('jwt', { session: false}), (req,res) => {
     console.log(req.user);
     res.json(req.user)

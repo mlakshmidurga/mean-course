@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import {AuthData} from './auth-data.model';
 import {environment} from '../../environments/environment';
 import { isNullOrUndefined } from 'util';
+import { MatCalendarBody } from "@angular/material";
 
 const BACKEND_URL = environment.apiUrl + "/user/";
 
@@ -13,12 +14,16 @@ const BACKEND_URL = environment.apiUrl + "/user/";
     providedIn: 'root'
 })
 export class AuthService{
+    user: AuthData = {
+        email: '',
+        password: ''
+    }
     private isAuthenticated = false;
     private token: string;
     private tokenTimer: any;
     private userId: string;
     private authStatusListener = new Subject();
-    user: AuthData;
+    
     currentUser: string;
     constructor(private http: HttpClient, private router: Router){}
 
@@ -61,7 +66,9 @@ export class AuthService{
                 this.setAuthTimer(expiresInDuration);
                 this.isAuthenticated = true;
                 this.userId = response.userId;
+                console.log(this.userId);
                 this.currentUser = response.currentUser;
+                console.log(this.currentUser);
                 this.authStatusListener.next(true);
                  const now = new Date();
                  const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
@@ -154,4 +161,5 @@ export class AuthService{
         }
     
         }
+        
 }

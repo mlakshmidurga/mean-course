@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../app/auth/auth.service';
 import { AuthData } from 'src/app/auth/auth-data.model';
 import { isNullOrUndefined } from 'util';
+import {NgForm} from "@angular/forms";
 @Component({
  selector: 'app-header',
  templateUrl: './header.component.html',
@@ -11,9 +12,13 @@ import { isNullOrUndefined } from 'util';
 export class HeaderComponent implements OnInit, OnDestroy{
     userIsAuthenticated;
     private authListenerSubs: Subscription;
-    user: AuthData;
-   
+    user: AuthData ={
+        email: '',
+        password: ''
+    }
+  
     constructor(private authservice: AuthService){
+       
         this.user=this.authservice.getCurrentUser();
         console.log(this.user);
         this.user = JSON.parse(localStorage.getItem('currentUser'))
@@ -21,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
     }
     
     ngOnInit() {
-     
+      
         this.userIsAuthenticated = this.authservice.getIsAuth();
         this.authListenerSubs = this.authservice
         .getauthStatusListener()
@@ -34,8 +39,10 @@ export class HeaderComponent implements OnInit, OnDestroy{
       this.authListenerSubs.unsubscribe();
         
     }
-
+  
     onLogout(){
         this.authservice.logout();
     }
+
+    
 }
