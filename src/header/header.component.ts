@@ -12,21 +12,17 @@ import {NgForm} from "@angular/forms";
 export class HeaderComponent implements OnInit, OnDestroy{
     userIsAuthenticated;
     private authListenerSubs: Subscription;
-    user: AuthData ={
-        email: '',
-        password: ''
-    }
+    currentUser: AuthData;
+    user: AuthData[] = [];
   
     constructor(private authservice: AuthService){
+        this.currentUser = JSON.parse(localStorage.getItem('email'));
        
-        this.user=this.authservice.getCurrentUser();
-        console.log(this.user);
-        this.user = JSON.parse(localStorage.getItem('currentUser'))
-        console.log(this.user);
     }
     
     ngOnInit() {
-      
+        this.user = JSON.parse(localStorage.getItem('email'))
+        console.log(this.user);
         this.userIsAuthenticated = this.authservice.getIsAuth();
         this.authListenerSubs = this.authservice
         .getauthStatusListener()

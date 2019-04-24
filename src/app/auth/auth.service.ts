@@ -22,6 +22,7 @@ export class AuthService{
     private token: string;
     private tokenTimer: any;
     private userId: string;
+    private email: string;
     private authStatusListener = new Subject();
     
     currentUser: string;
@@ -29,6 +30,7 @@ export class AuthService{
 
     getToken(){
         return this.token;
+        
     }
 
     getIsAuth() {
@@ -37,6 +39,10 @@ export class AuthService{
 
     getUserId(){
         return this.userId;
+    }
+
+    getUserEmail(){
+        return this.email;
     }
 
     getauthStatusListener(){
@@ -57,7 +63,7 @@ export class AuthService{
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
         console.log(authData);
-        this.http.post<{token: string, expiresIn: number, userId: string, currentUser: string}>(BACKEND_URL + "/login", authData)
+        this.http.post<{token: string, expiresIn: number, userId: string, email: string}>(BACKEND_URL + "/login", authData)
         .subscribe(response => {
             const token = response.token;
             this.token = token;
@@ -67,13 +73,13 @@ export class AuthService{
                 this.isAuthenticated = true;
                 this.userId = response.userId;
                 console.log(this.userId);
-                this.currentUser = response.currentUser;
-                console.log(this.currentUser);
+                this.email = response.email;
+                console.log(this.email);
                 this.authStatusListener.next(true);
                  const now = new Date();
                  const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
                  console.log(expirationDate);
-                 this.saveAuthData(token, expirationDate, this.userId, this.currentUser);
+                 this.saveAuthData(token, expirationDate, this.userId, this.email);
                 this.router.navigate(['/']);
             }
            
@@ -106,6 +112,7 @@ export class AuthService{
         this.isAuthenticated = false;
         this.authStatusListener.next(false);
         this.userId = null;
+        this.email = null;
         clearTimeout(this.tokenTimer);
         this.clearAuthData();
         this.router.navigate(['/']);
@@ -119,25 +126,25 @@ export class AuthService{
        }, duration * 1000);
     }
 
-    private saveAuthData(token: string, expirationDate: Date, userId:string, currentUser: string) {
+    private saveAuthData(token: string, expirationDate: Date, userId:string, email: string) {
         localStorage.setItem('token', token);
         localStorage.setItem('expiration', expirationDate.toISOString());
         localStorage.setItem('userId', userId);
-        localStorage.setItem('currentUser', JSON.stringify(userId));
+        localStorage.setItem('email', JSON.stringify(email));
     }
 
     private clearAuthData(){
         localStorage.removeItem('token');
         localStorage.removeItem('expirationDate');
         localStorage.removeItem('userId');
-        localStorage.removeItem('currentUser');
+        localStorage.removeItem('email');
     }
 
     private getAuthData(){
         const token = localStorage.getItem('token');
         const expirationDate = localStorage.getItem('expiration');
         const userId = localStorage.getItem('userId');
-        const user = localStorage.getItem('currentUser');
+        const email = localStorage.getItem('email');
         if(!token || !expirationDate){
             return;
         }
@@ -146,12 +153,12 @@ export class AuthService{
             token: token,
             expirationDate: new Date(expirationDate),
             userId: userId,
-            currentUser: user
+            email: email
         }
     }
 
     getCurrentUser(): AuthData{
-        let userString=localStorage.getItem('userId');
+        let userString=localStorage.getItem('email');
         console.log(userString);
         if(!isNullOrUndefined(userString)){
             let user: AuthData;
@@ -161,5 +168,5 @@ export class AuthService{
         }
     
         }
-        
+       
 }
