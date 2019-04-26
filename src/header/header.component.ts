@@ -16,13 +16,13 @@ export class HeaderComponent implements OnInit, OnDestroy{
     user: AuthData[] = [];
   
     constructor(private authservice: AuthService){
-        this.currentUser = JSON.parse(localStorage.getItem('email'));
+        // this.user = JSON.parse(localStorage.getItem('email'));
        
     }
     
     ngOnInit() {
-        this.user = JSON.parse(localStorage.getItem('email'))
-        console.log(this.user);
+        // this.user = JSON.parse(localStorage.getItem('email'))
+        // console.log(this.user);
         this.userIsAuthenticated = this.authservice.getIsAuth();
         this.authListenerSubs = this.authservice
         .getauthStatusListener()

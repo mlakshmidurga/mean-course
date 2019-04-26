@@ -20,12 +20,12 @@ module.exports = (passport, userType)=> {
                 return done(null, false);
             });
         }
-        if(userType == 'user'){
-            User.getUserById(jwt_payload.userId, (err, user)=>{
-                if(err) return done(err, false);
-                if(user) return done(null, user);
-                return done(null, false);
-            });
-        }
+        // if(userType == 'user'){
+        //     User.getUserById(jwt_payload.userId, (err, user)=>{
+        //         if(err) return done(err, false);
+        //         if(user) return done(null, user);
+        //         return done(null, false);
+        //     });
+        // }
     }));
 }

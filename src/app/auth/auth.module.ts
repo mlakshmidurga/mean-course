@@ -5,12 +5,16 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { AngularMaterialModule } from "../angular-material.module";
 import { AuthRoutingModule } from "./auth-routing.module";
+import { AhomeComponent } from './admin/ahome/ahome.component';
+import { AccessDeniedComponent } from './access-denied/access-denied/access-denied.component';
 
 
 @NgModule({
     declarations: [
         LoginComponent,
-        SignupComponent
+        SignupComponent,
+        AhomeComponent,
+        AccessDeniedComponent
     ],
     imports: [
         CommonModule,

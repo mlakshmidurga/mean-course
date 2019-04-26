@@ -19,6 +19,7 @@ export class AuthService{
         password: ''
     }
     private isAuthenticated = false;
+    
     private token: string;
     private tokenTimer: any;
     private userId: string;
@@ -27,10 +28,11 @@ export class AuthService{
     
     currentUser: string;
     constructor(private http: HttpClient, private router: Router){}
-
+    loggedIn(){
+        return !!localStorage.getItem('token');
+        }
     getToken(){
         return this.token;
-        
     }
 
     getIsAuth() {
@@ -59,7 +61,10 @@ export class AuthService{
          }
         );
     }
-
+    
+    isAdmin(){
+        return this.isAuthenticated;
+    }
     login(email: string, password: string){
         const authData: AuthData = {email: email, password: password}
         console.log(authData);
@@ -169,4 +174,6 @@ export class AuthService{
     
         }
        
+
+        
 }

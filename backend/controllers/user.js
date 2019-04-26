@@ -4,13 +4,14 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-// const config = require('../config/passport');
+ const config = require('../config/passport');
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         const user = new User({
             email: req.body.email,
-            password: hash
+            password: hash,
+            role:req.body.role
         });
         user.save()
         .then(result => {
@@ -50,16 +51,17 @@ exports.userLogin = (req, res, next) => {
                  message: 'Auth Failed'
              });  
          }
-         const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id},
+         const token = jwt.sign({ userId: fetchedUser._id},
          "secret_this_should_be_longer",
          {expiresIn: '1hr'}
      );
-    //  console.log(token);
+    //   console.log(token);
          res.status(200).json({
-             token: "JWT " + token,
+             token: token,
              expiresIn: 3600,
              userId: fetchedUser._id,
-             email: fetchedUser.email
+             
+            role: fetchedUser.role
          });
      })
      .catch(err => {

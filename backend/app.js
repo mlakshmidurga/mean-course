@@ -9,7 +9,7 @@ const adminRoutes = require('./routes/admin')
 const app = express();
 const config = require('./config/database');
 require('./config/passport')(passport);
-mongoose.connect(config.database, { useNewUrlParser: true }
+mongoose.connect("mongodb+srv://lakshmi:5gKBz2127ytAD9S9@cluster0-ubid1.mongodb.net/test", { useNewUrlParser: true }
 )
 .then(() => {
 console.log("connected to database");

@@ -16,6 +16,13 @@
             <button mat-button (click)="onLogout()">Logout</button>
             {{user}}
         </li>
+       <li>
+            <a
+              *ngIf="userIsAuthenticated && !expectedRole "
+              routerLink="/create"
+              routerLinkActive="active"
+              >Admin</a>
+          </li> 
     </ul>
     
 </mat-toolbar>
